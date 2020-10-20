@@ -8,8 +8,8 @@
 		<version>2.3.1.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.seb</groupId>
-	<artifactId>customer-service</artifactId>
+	<groupId>com.codeemma</groupId>
+	<artifactId>Employee-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>puzzle</name>
 	<description>Demo project for Spring Boot</description>
@@ -26,6 +26,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
