@@ -2,9 +2,8 @@ package com.codeemma.employee.service;
 
 import com.codeemma.employee.exception.EmployeeNotFound;
 import com.codeemma.employee.model.Employee;
-import com.codeemma.employee.store.EmployeeStore;
+import com.codeemma.employee.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,10 +12,10 @@ import java.util.UUID;
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
-    private final EmployeeStore employeeStore;
+    private final EmployeeRepository employeeRepository;
 
-    public EmployeeServiceImpl(EmployeeStore employeeStore) {
-        this.employeeStore = employeeStore;
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -24,19 +23,19 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee = employee.toBuilder()
                 .id(UUID.randomUUID())
                 .build();
-        employeeStore.store(employee);
+        employeeRepository.save(employee);
 
         return employee;
     }
 
     @Override
     public Optional<Employee> get(UUID id) {
-        return employeeStore.get(id);
+        return employeeRepository.findById(id);
     }
 
     @Override
     public List<Employee> getAll() {
-        return employeeStore.getAll();
+        return employeeRepository.findAll();
     }
 
     @Override
@@ -46,13 +45,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee = employee.toBuilder()
                 .id(existing.getId())
                 .build();
-        employeeStore.store(employee);
+        employeeRepository.save(employee);
         return employee;
     }
 
     @Override
     public void delete(UUID id) {
-        employeeStore.remove(id);
+        employeeRepository.deleteById(id);
     }
 //
 //    @Override

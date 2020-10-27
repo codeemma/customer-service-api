@@ -1,7 +1,7 @@
 package com.codeemma.employee.service;
 
 import com.codeemma.employee.exception.EmployeeNotFound;
-import com.codeemma.employee.store.EmployeeStore;
+import com.codeemma.employee.repository.EmployeeRepository;
 import com.codeemma.employee.model.Employee;
 import org.joda.time.LocalDate;
 import org.junit.Before;
@@ -23,42 +23,42 @@ import static org.mockito.Mockito.*;
 public class EmployeeServiceTest {
 
     @Mock
-    private EmployeeStore employeeStore;
+    private EmployeeRepository employeeRepository;
 
     private EmployeeService employeeService;
 
     @Before
     public void setUp() throws Exception {
-        employeeService = new EmployeeServiceImpl(employeeStore);
+        employeeService = new EmployeeServiceImpl(employeeRepository);
     }
 
     @Test
     public void testCreateShouldAddId() {
         Employee result = employeeService.create(employee());
 
-        verify(employeeStore).store(any(Employee.class));
+        verify(employeeRepository).save(any(Employee.class));
         assertThat(result.getId()).isNotNull();
     }
 
     @Test
     public void getWhenNotInstoreShouldReturnEmpty() {
         UUID id = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
-        when(employeeStore.get(id)).thenReturn(Optional.empty());
+        when(employeeRepository.findById(id)).thenReturn(Optional.empty());
 
         Optional<Employee> result = employeeService.get(id);
 
-        verify(employeeStore).get(id);
+        verify(employeeRepository).findById(id);
         assertThat(result.isPresent()).isFalse();
     }
 
     @Test
     public void getWhenEmployeeIsInStoreShouldReturnCustomer() {
         UUID id = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
-        when(employeeStore.get(id)).thenReturn(Optional.of(mock(Employee.class)));
+        when(employeeRepository.findById(id)).thenReturn(Optional.of(mock(Employee.class)));
 
         Optional<Employee> result = employeeService.get(id);
 
-        verify(employeeStore).get(id);
+        verify(employeeRepository).findById(id);
         assertThat(result.isPresent()).isTrue();
     }
 
@@ -77,7 +77,7 @@ public class EmployeeServiceTest {
 
         List<Employee> result = employeeService.getAll();
 
-        verify(employeeStore).getAll();
+        verify(employeeRepository).findAll();
         assertThat(result).hasSize(1);
     }
 
@@ -85,12 +85,12 @@ public class EmployeeServiceTest {
     public void updateWhenEmployeeIsInStoreShouldUpdate() {
         UUID id = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
         Employee employee = employee().toBuilder().id(id).build();
-        when(employeeStore.get(id)).thenReturn(Optional.of(employee));
+        when(employeeRepository.findById(id)).thenReturn(Optional.of(employee));
 
         Employee result = employeeService.update(id, employee());
 
-        verify(employeeStore).get(id);
-        verify(employeeStore).store(any(Employee.class));
+        verify(employeeRepository).findById(id);
+        verify(employeeRepository).save(any(Employee.class));
         assertThat(result).isEqualToComparingFieldByField(employee);
     }
 
@@ -98,7 +98,7 @@ public class EmployeeServiceTest {
     public void updateWhenEmployeeIsInStoreShouldThrowException() {
         UUID id = UUID.fromString("38400000-8cf0-11bd-b23e-10b96e4ef00d");
 
-        when(employeeStore.get(id)).thenReturn(Optional.empty());
+        when(employeeRepository.findById(id)).thenReturn(Optional.empty());
 
         Employee result = employeeService.update(id, employee());
     }
@@ -109,7 +109,7 @@ public class EmployeeServiceTest {
 
         employeeService.delete(id);
 
-        verify(employeeStore).remove(id);
+        verify(employeeRepository).deleteById(id);
     }
 
 
